@@ -72,6 +72,16 @@ const ExamPaperContainer = () => {
     navigate("/");
   };
 
+  const handleSkip = () => {
+    if (activeStep < examPaper.length) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+    console.log("examPaper", examPaper);
+    const id = ansList.map((id) => id.question);
+    const skipList = examPaper.filter((list) => !id.includes(list._id));
+    console.log("skipList", skipList);
+  };
+
   useEffect(() => {
     getExamPaper();
   }, []);
@@ -85,6 +95,7 @@ const ExamPaperContainer = () => {
     status,
     handleRedirect,
     isLoading,
+    handleSkip,
   };
 };
 

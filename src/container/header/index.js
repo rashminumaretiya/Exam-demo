@@ -13,6 +13,11 @@ const menu = [
     menu: "Create Exam",
     isStudent: false,
   },
+  {
+    path: "/view-exam",
+    menu: "View Exam",
+    isStudent: false,
+  },
 ];
 const HeaderContainer = () => {
   const navigate = useNavigate();
@@ -48,7 +53,7 @@ const HeaderContainer = () => {
     setMenuList(menuList);
 
     const userDropdownList =
-      userInfo.role === "teacher"
+      userInfo?.role === "teacher"
         ? userMenuList.filter((el) => el.isTeacher !== false)
         : userMenuList;
     setUserDropdownList(userDropdownList);

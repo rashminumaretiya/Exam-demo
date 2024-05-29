@@ -1,117 +1,172 @@
 import { useState } from "react";
-
+import { apiCall } from "../../api";
+import { toast } from "react-toastify";
+const createExamField = [
+  {
+    name: "question",
+    type: "text",
+    label: `Question 1`,
+    md: 6,
+  },
+  {
+    name: "answer",
+    type: "select",
+    label: "Answer",
+    dropdownList: [],
+    md: 6,
+    disabled: true,
+  },
+  {
+    name: "option1",
+    type: "text",
+    label: "Option 1",
+    isOptions: true,
+    optionIndex: 1,
+    md: 3,
+  },
+  {
+    name: "option2",
+    type: "text",
+    label: "Option 2",
+    isOptions: true,
+    optionIndex: 2,
+    md: 3,
+  },
+  {
+    name: "option3",
+    type: "text",
+    label: "Option 3",
+    isOptions: true,
+    optionIndex: 3,
+    md: 3,
+  },
+  {
+    name: "option4",
+    type: "text",
+    label: "Option 4",
+    isOptions: true,
+    optionIndex: 4,
+    md: 3,
+  },
+];
 const CreateExamContainer = () => {
+  const { ApiContainer } = apiCall();
   const [formFields, setFormFields] = useState({
     subjectName: "",
-    question: "",
-    options: [],
-    answer: "",
+    questions: [
+      {
+        question: "",
+        options: [],
+        answer: "",
+      },
+    ],
+    notes: ["10mins exam", "start time 10am"],
   });
-
-  const [storeData, setStoreData] = useState([]);
-
-  const createExamField = [
+  const subjectField = [
     {
-      subjectName: [
-        {
-          name: "subjectName",
-          type: "text",
-          label: `Subject Name`,
-          md: 6,
-        },
-      ],
-      questions: [
-        {
-          name: "question",
-          type: "text",
-          label: `Question 1`,
-          md: 6,
-        },
-        {
-          name: "answer",
-          type: "select",
-          label: "Answer",
-          dropdownList: [],
-          md: 6,
-        },
-        {
-          name: "answer1",
-          type: "text",
-          label: "Answer 1",
-          isOptions: true,
-          optionIndex: 1,
-          md: 3,
-        },
-        {
-          name: "answer2",
-          type: "text",
-          label: "Answer 2",
-          isOptions: true,
-          optionIndex: 2,
-          md: 3,
-        },
-        {
-          name: "answer3",
-          type: "text",
-          label: "Answer 3",
-          isOptions: true,
-          optionIndex: 3,
-          md: 3,
-        },
-        {
-          name: "answer4",
-          type: "text",
-          label: "Answer 4",
-          isOptions: true,
-          optionIndex: 4,
-          md: 3,
-        },
-      ],
+      name: "subjectName",
+      type: "text",
+      label: `Subject Name`,
+      md: 6,
     },
   ];
-  const [cloneField, setCloneField] = useState([...createExamField]);
 
-  const handleChange = (e) => {
+  const [cloneField, setCloneField] = useState([createExamField]);
+  const handleChange = (e, ind) => {
     const { name, value } = e.target;
-    console.log("createExamField", createExamField);
-    const field = createExamField?.map((field) =>
-      field?.questions.filter((el) => el.name === name)
-    );
-    let option = formFields?.options;
-    console.log("field?.isOptions", [...field]);
-    if (field?.isOptions) {
-      console.log("first", field?.isOptions);
-      option[field?.optionIndex - 1] = value;
+    const newField = [...subjectField, ...cloneField.flat()];
+    const field = newField?.filter((field) => field.name === name);
+    let option = formFields?.questions[ind]?.options;
+    let newCloneField = JSON.parse(JSON.stringify(cloneField));
+    if (field[0].isOptions) {
+      option[field[0].optionIndex - 1] = value;
+      newCloneField[ind].forEach((item) => {
+        item.dropdownList = [];
+        item.dropdownList.push(...formFields.questions[ind].options);
+
+        newCloneField[ind][1].disabled =
+          item.dropdownList.length === 0 ? true : false;
+      });
     }
+    if (field[0].name === "question") {
+      formFields.questions[ind].question = value;
+    }
+    if (field[0].name === "answer") {
+      formFields.questions[ind].answer = value;
+    }
+    setCloneField([...newCloneField]);
     setFormFields((prev) => ({
       ...prev,
-      ...(!field?.isOptions && { [name]: value }),
-      options: option,
+      ...(!field[0]?.isOptions &&
+        field[0].name !== "question" &&
+        field[0].name !== "answer" && { [name]: value }),
     }));
   };
 
-  console.log("formFields", formFields);
+  const handleAddRow = () => {
+    let clone = JSON.parse(JSON.stringify(createExamField));
+    clone[0].label = `Question ${cloneField.length + 1}`;
+    setCloneField((prev) => [...prev, clone]);
 
-  const handleAddRow = (i) => {
-    let clone = JSON.parse(JSON.stringify([...createExamField]));
-    clone[0].questions[0].label = `Question ${i + 2}`;
-    setCloneField((prev) => [...prev, ...clone]);
+    let cloneSub = { question: "", options: [], answer: "" };
+    setFormFields((prev) => ({
+      ...prev,
+      questions: [...prev.questions, cloneSub],
+    }));
   };
 
-  const handleDeleteRow = (el) => {
-    const updatedFields = [...cloneField];
-    const newData = updatedFields.filter((_, index) => index !== el);
+  console.log("cloneField", cloneField);
+
+  const handleDeleteRow = (e, ind) => {
+    const updatedFields = JSON.parse(JSON.stringify(cloneField));
+    const newData = updatedFields.filter((_, index) => index !== ind);
     newData.forEach((field, index) => {
-      field.questions[0].label = `Question ${index + 1}`;
+      field[0].label = `Question ${index + 1}`;
+    });
+    let newFormField = formFields.questions.filter((_, index) => index !== ind);
+    newFormField.forEach((field, index) => {
+      Object.keys(field).forEach((key) => {
+        newData.forEach((data) => {
+          if (key === "question") {
+            data[0].value = newFormField[index].question;
+          }
+          if (key === "answer") {
+            data[1].value = newFormField[index].answer;
+          }
+          if (key === "options") {
+            data[2].value = newFormField[index].options[0];
+            data[3].value = newFormField[index].options[1];
+            data[4].value = newFormField[index].options[2];
+            data[5].value = newFormField[index].options[3];
+          }
+        });
+      });
     });
     setCloneField(newData);
+    setFormFields((prev) => ({
+      ...prev,
+      questions: newFormField,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setStoreData((prev) => [...prev, formFields]);
+    try {
+      const fieldData = await ApiContainer(
+        "dashboard/Teachers/Exam",
+        "POST",
+        formFields
+      );
+      if (fieldData.data) {
+        toast.success(fieldData.data.message);
+      } else {
+        toast.error(fieldData.data.details.body[0].message);
+      }
+      console.log("formFields", fieldData);
+    } catch (error) {
+      toast.error("error", error);
+    }
   };
-  //   console.log("storeData", storeData);
 
   return {
     createExamField,
@@ -119,6 +174,7 @@ const CreateExamContainer = () => {
     handleAddRow,
     handleSubmit,
     cloneField,
+    subjectField,
     handleDeleteRow,
   };
 };

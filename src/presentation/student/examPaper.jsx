@@ -23,6 +23,7 @@ const ExamPaper = () => {
     status,
     handleRedirect,
     isLoading,
+    handleSkip,
   } = ExamPaperContainer();
   return (
     <>
@@ -86,7 +87,10 @@ const ExamPaper = () => {
                     );
                   })}
                 </BSStack>
-                <BSStack direction="row" justifyContent="end">
+                <BSStack direction="row" justifyContent="end" spacing={2}>
+                  <BSButton color="black" onClick={handleSkip}>
+                    Skip
+                  </BSButton>
                   <BSButton
                     onClick={() =>
                       examPaper?.length - 1 === activeStep

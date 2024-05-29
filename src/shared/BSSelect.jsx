@@ -26,6 +26,14 @@ const StyledSelect = styled(Select)(({ theme }) => ({
         },
       },
     },
+    "&.Mui-disabled": {
+      "& .MuiSelect-select": {
+        backgroundColor: "rgba(0, 0, 0, 0.07)",
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent",
+      },
+    },
   },
   "&:before, &:after": {
     content: "normal",

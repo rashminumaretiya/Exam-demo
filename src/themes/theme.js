@@ -4,6 +4,7 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#FFE147",
+      light: "#FFE14725",
     },
     secondary: {
       main: "#F0F0F0",
@@ -11,7 +12,9 @@ const theme = createTheme({
       light: "#F7F9FB",
     },
     error: {
-      main: "#ff0000",
+      main: "#ff5e5e",
+      light: "#ff000020",
+      contrastText: "#fff",
     },
     blue: {
       main: "#2C5CDC",
@@ -21,6 +24,7 @@ const theme = createTheme({
     },
     black: {
       main: "#252B33",
+      contrastText: "#fff",
     },
   },
   components: {

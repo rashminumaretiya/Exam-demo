@@ -8,17 +8,17 @@ const BSFormField = ({ list, onChange, handleShowPasswordClick = null }) => {
   return (
     <>
       <BSGrid container columnSpacing={3}>
-        {list?.map((item) =>
+        {list?.map((item, ind) =>
           item.type === "select" ? (
-            <BSGrid item md={item?.md || 12}>
+            <BSGrid item md={item?.md || 12} key={item.name}>
               <BSSelect
                 label={item?.label}
                 onChange={onChange}
                 error={item?.error}
                 value={item?.value}
-                key={item.name}
                 defaultValue={item?.defaultValue}
                 name={item?.name}
+                disabled={item?.disabled}
               >
                 {item.dropdownList.map((list, i) => {
                   return (
@@ -30,14 +30,13 @@ const BSFormField = ({ list, onChange, handleShowPasswordClick = null }) => {
               </BSSelect>
             </BSGrid>
           ) : (
-            <BSGrid item md={item?.md || 12}>
+            <BSGrid item md={item?.md || 12} key={item.name}>
               <BSInput
-                key={item.name}
                 type={item?.type}
                 label={item?.label}
                 name={item?.name}
                 value={item?.value}
-                onChange={onChange}
+                onChange={(e) => onChange(e, ind)}
                 error={item?.error}
                 helperText={item?.helperText}
                 AdornmentIcon={item?.AdornmentIcon}

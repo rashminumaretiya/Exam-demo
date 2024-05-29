@@ -6,6 +6,7 @@ import NewPassword from "../presentation/newPassword";
 import ExamPaper from "../presentation/student/examPaper";
 import CreateExam from "../presentation/createExam";
 import ViewStudentDetail from "../presentation/ViewStudentDetail";
+import ViewExam from "../presentation/viewExam";
 
 const Login = lazy(() => import("../presentation/login"));
 const Register = lazy(() => import("../presentation/register"));
@@ -59,6 +60,10 @@ const protectedRoutes = [
           {
             path: "/create-exam",
             element: <CreateExam />,
+          },
+          {
+            path: "/view-exam",
+            element: <ViewExam />,
           },
           {
             path: "/*",

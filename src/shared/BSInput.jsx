@@ -11,7 +11,10 @@ const TextField = styled(TF)(({ theme }) => ({
     borderRadius: 6,
     overflow: "hidden",
     "&.Mui-disabled": {
-      backgroundColor: "rgba(0, 0, 0, 0.12)",
+      backgroundColor: "rgba(0, 0, 0, 0.07)",
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "transparent",
+      },
     },
     "&.Mui-error": {
       borderColor: theme.palette.error.main,

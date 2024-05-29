@@ -7,7 +7,7 @@ const HomeContainer = () => {
   const [studentExam, setStudentExam] = useState();
   const [allStudent, setAllStudent] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const role = JSON.parse(localStorage.getItem("loggedUserData")).role;
+  const role = JSON.parse(localStorage.getItem("loggedUserData"))?.role;
   const navigate = useNavigate();
   const { ApiContainer } = apiCall();
 
