@@ -29,7 +29,6 @@ const ViewExam = () => {
     formField,
     buttonDisabled,
   } = ViewExamContainer();
-  console.log("formField", formField);
   return (
     <>
       <BSContainer>

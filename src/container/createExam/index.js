@@ -227,8 +227,6 @@ const CreateExamContainer = () => {
       questions: newFormField,
     }));
   };
-  console.log("formFields", formFields);
-  console.log("cloneField", cloneField);
   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErr = {};
@@ -250,7 +248,6 @@ const CreateExamContainer = () => {
         } else {
           toast.error(fieldData.data.details.body[0].message);
         }
-        console.log("formFields", fieldData);
       } catch (error) {
         toast.error("error");
       }

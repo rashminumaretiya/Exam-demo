@@ -56,7 +56,6 @@ const ExamPaperContainer = () => {
     }
     examPaper.forEach((el) => (el.checked = false));
   };
-  console.log("examPaper", examPaper);
 
   const handleSkip = () => {
     if (activeStep < examPaper.length + 1) {
