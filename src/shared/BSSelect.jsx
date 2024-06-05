@@ -82,7 +82,7 @@ const BSSelect = ({
         >
           {children}
         </StyledSelect>
-        <FormHelperText>{props.error}</FormHelperText>
+        <FormHelperText sx={{ mx: 0 }}>{props.error}</FormHelperText>
       </FormControl>
     </FormGroup>
   );

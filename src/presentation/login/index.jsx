@@ -58,7 +58,7 @@ const Login = () => {
           >
             <Link to="/forgot-password">Forgot Password</Link>
           </BSTypography>
-          <BSButton fullWidth type="submit">
+          <BSButton disabled={isLoading} fullWidth type="submit">
             Login
             {isLoading && (
               <CircularProgress sx={{ ml: 2 }} size={16} color="black" />

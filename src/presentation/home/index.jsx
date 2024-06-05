@@ -20,6 +20,7 @@ import BSStack from "../../shared/BSStack";
 import BSButton from "../../shared/BSButton";
 import BSCard from "../../shared/BSCard";
 import InfiniteScroll from "react-infinite-scroll-component";
+import BSGrid from "../../shared/BSGrid";
 
 const Home = () => {
   const {
@@ -92,75 +93,80 @@ const Home = () => {
                 </Table>
               </InfiniteScroll>
             </TableContainer>
-          ) : isLoading ? (
-            <>
-              <BSStack direction="row" spacing={2}>
-                {[1, 2, 3, 4, 5].map((item) => {
-                  return (
-                    <BSCard
-                      sx={{
-                        m: 1,
-                        width: "20%",
-                        boxShadow: "0 0 5px rgba(0,0,0,0.1)",
-                      }}
-                      key={item}
-                    >
-                      <BSTypography variant="h5" component="h5">
-                        <Skeleton />
-                      </BSTypography>
-                      <BSTypography mb={1} variant="body2" component="p">
-                        <Skeleton width="80%" />
-                      </BSTypography>
-                      <BSStack direction="row" spacing={1} mb={1}>
-                        <Skeleton width={100} height={30} variant="rounded" />
-                        <Skeleton width={100} height={30} variant="rounded" />
-                      </BSStack>
-                      <Skeleton width={120} height={40} variant="rounded" />
-                    </BSCard>
-                  );
-                })}
-              </BSStack>
-            </>
           ) : (
             <>
               <BSTypography variant="h6" mb={1}>
                 All Exam for student
               </BSTypography>
-              <BSSwiper
-                slidesPerView={5}
-                spaceBetween={20}
-                autoplay={{
-                  delay: 2500,
-                  disableOnInteraction: false,
-                }}
-              >
-                {studentExam?.map((data, i) => {
-                  return (
-                    <SwiperSlide key={data?._id}>
-                      <BSCard>
-                        <BSTypography variant="h5" component="h5">
-                          {data.subjectName}
-                        </BSTypography>
-                        <BSTypography mb={1} variant="body2" component="p">
-                          {data.email}
-                        </BSTypography>
-                        {data?.notes.map((note, i) => {
-                          return (
-                            <Chip sx={{ mr: 1, mb: 1 }} key={i} label={note} />
-                          );
-                        })}
-                        <BSButton
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleExam(data?._id)}
-                        >
-                          Give Exam
-                        </BSButton>
-                      </BSCard>
-                    </SwiperSlide>
-                  );
-                })}
-              </BSSwiper>
+              <BSGrid container spacing={3}>
+                {isLoading
+                  ? [1, 2, 3, 4, 5, 6, 7, 8].map((item) => {
+                      return (
+                        <BSGrid item md={3} key={item}>
+                          <BSCard
+                            sx={{
+                              boxShadow: "0 0 5px rgba(0,0,0,0.1)",
+                            }}
+                          >
+                            <BSTypography variant="h5" component="h5">
+                              <Skeleton />
+                            </BSTypography>
+                            <BSTypography mb={1} variant="body2" component="p">
+                              <Skeleton width="80%" />
+                            </BSTypography>
+                            <BSStack direction="row" spacing={1} mb={1}>
+                              <Skeleton
+                                width={100}
+                                height={30}
+                                variant="rounded"
+                              />
+                              <Skeleton
+                                width={100}
+                                height={30}
+                                variant="rounded"
+                              />
+                            </BSStack>
+                            <Skeleton
+                              width={120}
+                              height={40}
+                              variant="rounded"
+                            />
+                          </BSCard>
+                        </BSGrid>
+                      );
+                    })
+                  : studentExam?.reverse().map((data) => {
+                      return (
+                        <BSGrid item md={3} key={data?._id}>
+                          <BSCard>
+                            <BSTypography variant="h5" component="h5">
+                              {data.subjectName}
+                            </BSTypography>
+                            <BSTypography mb={1} variant="body2" component="p">
+                              {data.email}
+                            </BSTypography>
+                            {data?.notes.map((note, i) => {
+                              return (
+                                <Chip
+                                  sx={{ mr: 1, mb: 1 }}
+                                  key={i}
+                                  label={note}
+                                />
+                              );
+                            })}
+                            <BSButton
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleExam(data?._id)}
+                              sx={{ display: "table" }}
+                            >
+                              Give Exam
+                            </BSButton>
+                          </BSCard>
+                        </BSGrid>
+                      );
+                    })}
+              </BSGrid>
             </>
           )}
         </BSStack>

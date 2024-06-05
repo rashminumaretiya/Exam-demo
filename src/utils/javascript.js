@@ -1,8 +1,8 @@
 import { emailValidation } from "./regex";
 
-const checkName = (value) => {
+const checkName = (name, value) => {
   if (value === "") {
-    return "Please enter name";
+    return `Please enter ${name}`;
   }
 };
 const checkEmail = (value) => {
@@ -26,16 +26,27 @@ const confirmPasswordCheck = (value, password) => {
     return "Confirm password not match";
   }
 };
+const optionValidation = (name, value, optionMatch) => {
+  if (value === "") {
+    return `Please enter ${name}`;
+  } else if (optionMatch?.some((el) => el === value)) {
+    return "Same value is not allowed";
+  }
+};
 
 const validation = (
   name,
   value,
   skipPasswordsLengthValidation = null,
-  Password
+  Password,
+  optionMatch
 ) => {
   switch (name) {
     case "name":
-      return checkName(value) || null;
+    case "question":
+    case "answer":
+    case "subjectName":
+      return checkName(name, value) || null;
     case "email":
       return checkEmail(value) || null;
     case "password":
@@ -43,6 +54,11 @@ const validation = (
       return passwordCheck(value, skipPasswordsLengthValidation) || null;
     case "ConfirmPassword":
       return confirmPasswordCheck(value, Password) || null;
+    case "option1":
+    case "option2":
+    case "option3":
+    case "option4":
+      return optionValidation(name, value, optionMatch) || null;
     default:
       return null;
   }

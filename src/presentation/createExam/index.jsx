@@ -16,25 +16,36 @@ const CreateExam = () => {
     cloneField,
     subjectField,
     handleDeleteRow,
+    error,
   } = CreateExamContainer();
 
   return (
     <BSContainer>
       <BSForm onSubmit={handleSubmit}>
         <BSCard sx={{ my: 3, "& .MuiCardContent-root": { pb: 0 } }}>
-          <BSFormField list={subjectField} onChange={handleChange} />
+          <BSFormField
+            list={subjectField}
+            error={error}
+            onChange={handleChange}
+          />
         </BSCard>
         {cloneField?.map((data, i) => {
           return (
             <BSCard sx={{ my: 3 }} key={i}>
-              <BSFormField list={data} onChange={(e) => handleChange(e, i)} />
+              <BSFormField
+                error={error}
+                list={data}
+                onChange={(e) => handleChange(e, i)}
+              />
               {cloneField?.length - 1 === i ? (
-                <IconButton
-                  sx={{ backgroundColor: "primary.main" }}
-                  onClick={(e) => handleAddRow(e, i)}
-                >
-                  <Plus />
-                </IconButton>
+                cloneField?.length <= 14 && (
+                  <IconButton
+                    sx={{ backgroundColor: "primary.main" }}
+                    onClick={(e) => handleAddRow(e, i)}
+                  >
+                    <Plus />
+                  </IconButton>
+                )
               ) : (
                 <IconButton
                   sx={{ backgroundColor: "error.main", color: "white.main" }}

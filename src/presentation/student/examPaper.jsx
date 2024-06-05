@@ -12,6 +12,7 @@ import {
 import BSButton from "../../shared/BSButton";
 import BSStack from "../../shared/BSStack";
 import BSGrid from "../../shared/BSGrid";
+import BSModal from "../../shared/BSModal";
 
 const ExamPaper = () => {
   const {
@@ -24,7 +25,15 @@ const ExamPaper = () => {
     handleRedirect,
     isLoading,
     handleSkip,
+    skipQuestion,
+    checkVal,
+    ansList,
+    timer,
+    loaderTimer,
+    modalOpen,
+    handleClose,
   } = ExamPaperContainer();
+
   return (
     <>
       <BSContainer>
@@ -53,9 +62,38 @@ const ExamPaper = () => {
               </BSStack>
             ) : (
               <>
-                <BSTypography variant="h5" my={2}>
-                  Exam
-                </BSTypography>
+                <BSStack direction="row">
+                  <BSTypography variant="h5" my={2}>
+                    Exam
+                  </BSTypography>
+                  <BSStack
+                    sx={{
+                      ml: "auto",
+                      my: 2,
+                      borderRadius: "100%",
+                      backgroundColor: "#fff",
+                      width: 50,
+                      height: 50,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      "&:before": {
+                        content: '""',
+                        position: "absolute",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        top: 0,
+                        borderRadius: "100%",
+                        background: `conic-gradient(#ffffff00 ${loaderTimer}%, 0, #6495ED)`,
+                        zIndex: -1,
+                        margin: -0.5,
+                      },
+                    }}
+                  >
+                    <BSTypography>{timer}</BSTypography>
+                  </BSStack>
+                </BSStack>
                 <BSStack mb={3}>
                   {examPaper?.map((paper, i) => {
                     return (
@@ -64,6 +102,7 @@ const ExamPaper = () => {
                         className={` ${activeStep > i ? "complete" : ""}`}
                         sx={{
                           display: `${activeStep === i ? "block" : "none"}`,
+                          mb: 2,
                         }}
                       >
                         <BSTypography mb={2} fontWeight="bold">
@@ -79,6 +118,7 @@ const ExamPaper = () => {
                                 label={data}
                                 key={ind}
                                 onChange={handleChange}
+                                checked={paper.checked}
                               />
                             );
                           })}
@@ -86,19 +126,62 @@ const ExamPaper = () => {
                       </BSCard>
                     );
                   })}
+                  {examPaper?.length === activeStep &&
+                    skipQuestion.map((skipData) => {
+                      return (
+                        <BSCard key={skipData.question} sx={{ mb: 2 }}>
+                          <BSTypography mb={2} fontWeight="bold">
+                            {skipData?.question}
+                          </BSTypography>
+                          <RadioGroup row name={`${skipData._id}`}>
+                            {skipData?.options.map((data, ind) => {
+                              return (
+                                <FormControlLabel
+                                  value={`${data}`}
+                                  control={<Radio />}
+                                  label={data}
+                                  key={ind}
+                                  onChange={handleChange}
+                                />
+                              );
+                            })}
+                          </RadioGroup>
+                        </BSCard>
+                      );
+                    })}
+                  {skipQuestion.length === 0 &&
+                    examPaper?.length === activeStep &&
+                    ansList.map((ans) => {
+                      return (
+                        <BSCard key={ans.question} sx={{ mb: 2 }}>
+                          <BSTypography mb={2} fontWeight="bold">
+                            {ans?.question}
+                          </BSTypography>
+                          <BSTypography mb={2}>{ans?.answer}</BSTypography>
+                        </BSCard>
+                      );
+                    })}
                 </BSStack>
-                <BSStack direction="row" justifyContent="end" spacing={2}>
-                  <BSButton color="black" onClick={handleSkip}>
-                    Skip
-                  </BSButton>
+                <BSStack direction="row" spacing={2}>
+                  {examPaper?.length !== activeStep ? (
+                    <BSButton color="black" onClick={handleSkip}>
+                      Skip
+                    </BSButton>
+                  ) : null}
+
                   <BSButton
                     onClick={() =>
-                      examPaper?.length - 1 === activeStep
+                      examPaper?.length === activeStep &&
+                      skipQuestion.length === 0
                         ? handleSubmitExam()
                         : handleNextQuestion()
                     }
+                    disabled={checkVal}
                   >
-                    {examPaper?.length - 1 === activeStep ? "Submit" : "Next"}
+                    {examPaper?.length === activeStep &&
+                    skipQuestion.length === 0
+                      ? "Submit"
+                      : "Next"}
                   </BSButton>
                 </BSStack>
               </>
@@ -106,6 +189,15 @@ const ExamPaper = () => {
           </BSGrid>
         </BSGrid>
       </BSContainer>
+      <BSModal
+        title="Time's up!"
+        open={modalOpen}
+        maxWidth="xs"
+        fullWidth
+        onClose={handleClose}
+      >
+        <BSTypography>Please try again!</BSTypography>
+      </BSModal>
     </>
   );
 };
