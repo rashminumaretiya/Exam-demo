@@ -2,17 +2,19 @@ import { toast } from "react-toastify";
 import { apiCall } from "../../api";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import validation from "../../utils/javascript";
 
 const ViewExamContainer = () => {
   const [viewExamData, setViewExamData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [circleLoading, setCircleLoadingLoading] = useState(false);
+  const [circleLoading, setCircleLoading] = useState(false);
   const [open, setOpen] = useState({});
   const [examDetailOpen, setExamDetailOpen] = useState(false);
   const [examDetail, setExamDetail] = useState([]);
   const [examOption, setExamOption] = useState({});
   const [formField, setFormField] = useState([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
   const { ApiContainer } = apiCall();
@@ -41,7 +43,7 @@ const ViewExamContainer = () => {
   };
   const handleDeleteExam = async (id) => {
     const newData = viewExamData.filter((item) => item._id !== id);
-    setCircleLoadingLoading(true);
+    setCircleLoading(true);
     try {
       const response = await ApiContainer(
         `dashboard/Teachers/deleteExam?id=${id}`,
@@ -50,12 +52,12 @@ const ViewExamContainer = () => {
       );
       if (response.statusCode === 200) {
         toast.success(response.data.message);
-        setCircleLoadingLoading(false);
+        setCircleLoading(false);
         setOpen(null);
         setViewExamData(newData);
       } else {
         toast.error(response.data.message);
-        setCircleLoadingLoading(false);
+        setCircleLoading(false);
         setOpen(null);
       }
     } catch (error) {
@@ -65,10 +67,11 @@ const ViewExamContainer = () => {
     }
   };
   const handleClose = () => {
-    setOpen(null);
-    setExamDetailOpen(null);
+    setOpen(false);
+    setExamDetailOpen(false);
   };
   const fetchExamDetail = async (id) => {
+    setCircleLoading(true);
     try {
       const response = await ApiContainer(
         `dashboard/Teachers/examDetail?id=${id}`,
@@ -86,10 +89,12 @@ const ViewExamContainer = () => {
       }
     } catch (error) {
       toast.error(error);
+    } finally {
+      setCircleLoading(false);
     }
   };
   const handleExamDetail = (id, type, subjectName) => {
-    setExamDetailOpen(id);
+    setExamDetailOpen(id ? true : false);
     fetchExamDetail(id);
     switch (type) {
       case "Edit":
@@ -104,23 +109,40 @@ const ViewExamContainer = () => {
   };
   const handleChange = (e, index, optionIndex) => {
     const { name, value } = e.target;
-    let updatedExamDetail = JSON.parse(JSON.stringify(examDetail));
-    if (name === "options") {
-      updatedExamDetail[index].options[optionIndex] = value;
+    let newErr = {
+      ...formField.questions[index].helperText,
+      [name]: validation(name, value, true, null),
+    };
+
+    formField.questions[index].error = newErr;
+    formField.questions[index].helperText = newErr;
+    Object.values(newErr).some((el) => {
+      if (el !== null) {
+        return setButtonDisabled(true);
+      } else {
+        return setButtonDisabled(false);
+      }
+    });
+
+    if (
+      name === "option1" ||
+      name === "option2" ||
+      name === "option3" ||
+      name === "option4"
+    ) {
+      formField.questions[index].options[optionIndex] = value;
     } else {
-      updatedExamDetail[index][name] = value;
+      formField.questions[index][name] = value;
     }
     setFormField({
       subjectName: examOption.subjectName,
-      questions: [...updatedExamDetail],
+      questions: formField?.questions,
       notes: ["10mins exam", "start time 10am"],
     });
-    const disableVal =
-      JSON.stringify(examDetail) === JSON.stringify(updatedExamDetail);
-    setButtonDisabled(disableVal);
   };
+  console.log("formField", formField.questions);
   const handleSubmit = async (id) => {
-    setCircleLoadingLoading(true);
+    setCircleLoading(true);
     try {
       const response = await ApiContainer(
         `dashboard/Teachers/editExam?id=${id}`,
@@ -136,7 +158,7 @@ const ViewExamContainer = () => {
     } catch (err) {
       toast.error(err);
     } finally {
-      setCircleLoadingLoading(false);
+      setCircleLoading(false);
     }
   };
 
@@ -154,7 +176,6 @@ const ViewExamContainer = () => {
     circleLoading,
     handleExamDetail,
     examDetailOpen,
-    examDetail,
     examOption,
     handleChange,
     handleSubmit,

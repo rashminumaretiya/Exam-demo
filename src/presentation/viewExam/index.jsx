@@ -22,7 +22,6 @@ const ViewExam = () => {
     circleLoading,
     handleExamDetail,
     examDetailOpen,
-    examDetail,
     examOption,
     handleChange,
     handleSubmit,
@@ -132,7 +131,6 @@ const ViewExam = () => {
         maxWidth="lg"
         fullWidth
         onClose={handleClose}
-        examDetail={examDetail}
         title={`${!examOption.edit ? "View" : "Edit"} Exam ${
           examOption.subjectName
         }`}
@@ -144,7 +142,7 @@ const ViewExam = () => {
         formField={formField}
       />
       <BSModal
-        open={open?.id}
+        open={open?.id ? true : false}
         maxWidth="xs"
         fullWidth
         onClose={handleClose}

@@ -1,7 +1,5 @@
 import React from "react";
 import HomeContainer from "../../container/home";
-import BSSwiper from "../../shared/BSSwiper";
-import { SwiperSlide } from "swiper/react";
 import {
   Chip,
   CircularProgress,
@@ -64,7 +62,7 @@ const Home = () => {
                   <TableBody>
                     {allStudent?.slice(0, items?.length)?.map((data, i) => {
                       return (
-                        <TableRow>
+                        <TableRow key={i}>
                           <TableCell>{data.name}</TableCell>
                           <TableCell>{data.email}</TableCell>
                           <TableCell>

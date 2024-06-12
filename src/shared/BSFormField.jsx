@@ -18,6 +18,7 @@ const BSFormField = ({ list, onChange, handleShowPasswordClick = null }) => {
                 value={item?.value}
                 defaultValue={item?.defaultValue}
                 name={item?.name}
+                helperText={item?.helperText}
                 disabled={item?.disabled}
               >
                 {item.dropdownList.map((list, i) => {

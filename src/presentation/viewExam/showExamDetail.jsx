@@ -9,7 +9,6 @@ import BSForm from "../../shared/BSForm";
 import BSButton from "../../shared/BSButton";
 
 const ShowExamDetail = ({
-  examDetail,
   disabled,
   handleChange,
   handleClick,
@@ -20,6 +19,13 @@ const ShowExamDetail = ({
 }) => {
   return (
     <BSModal {...props}>
+      {loading && (
+        <CircularProgress
+          sx={{ mx: "auto", my: 3, display: "table" }}
+          color="black"
+        />
+      )}
+
       <BSForm>
         {formField?.questions?.map((data, i) => {
           return (
@@ -37,6 +43,8 @@ const ShowExamDetail = ({
                     disabled={disabled}
                     onChange={(e) => handleChange(e, i)}
                     name="question"
+                    helperText={data.helperText?.question}
+                    error={data.error?.question}
                   />
                 </BSGrid>
                 <BSGrid item md={6}>
@@ -47,6 +55,8 @@ const ShowExamDetail = ({
                     disabled={disabled}
                     name="answer"
                     onChange={(e) => handleChange(e, i)}
+                    error={data.error?.answer}
+                    helperText={data.helperText?.answer}
                   >
                     {data.options.map((option) => {
                       return (
@@ -59,14 +69,17 @@ const ShowExamDetail = ({
                 </BSGrid>
 
                 {data.options.map((option, optionIndex) => {
+                  const inputName = `option${optionIndex + 1}`;
                   return (
                     <BSGrid item md={3} key={optionIndex}>
                       <BSInput
                         disabled={disabled}
                         value={option}
                         label={`Option ${optionIndex + 1}`}
-                        name="options"
+                        name={inputName}
                         onChange={(e) => handleChange(e, i, optionIndex)}
+                        error={data.error?.[inputName]}
+                        helperText={data.helperText?.[inputName]}
                       />
                     </BSGrid>
                   );

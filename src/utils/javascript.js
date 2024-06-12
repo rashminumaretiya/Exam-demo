@@ -29,8 +29,6 @@ const confirmPasswordCheck = (value, password) => {
 const optionValidation = (name, value, optionMatch) => {
   if (value === "") {
     return `Please enter ${name}`;
-  } else if (optionMatch?.some((el) => el === value)) {
-    return "Same value is not allowed";
   }
 };
 

@@ -14,7 +14,7 @@ const ExamPaperContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [skipQuestion, setSkipQuestion] = useState([]);
   const [checkVal, setCheckVal] = useState(true);
-  const [timer, setTimer] = useState();
+  const [timer, setTimer] = useState({});
   const [loaderTimer, setLoaderTimer] = useState();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -116,19 +116,27 @@ const ExamPaperContainer = () => {
     navigate("/");
   };
   const timerFn = (time) => {
-    let currentTime = time;
+    let second = 60;
+    let minute = time - 1;
+    let circlePercent = (time * 100) / 60;
+    let elapsedTime = 100 / (time * 60);
     const intervalID = setInterval(() => {
-      currentTime = currentTime - 1;
-      setLoaderTimer(Math.abs(-100 + (currentTime * 100) / 60));
-      setTimer(currentTime);
-      if (currentTime === 0) {
-        clearInterval(intervalID);
-        setModalOpen(true);
+      second = second - 1;
+      circlePercent = circlePercent + elapsedTime;
+      setLoaderTimer(circlePercent);
+      setTimer({ minute, second });
+      if (second <= 0) {
+        minute = minute - 1;
+        second = 60;
+        if (minute < 0) {
+          clearInterval(intervalID);
+          setModalOpen(true);
+        }
       }
     }, 1000);
   };
   useEffect(() => {
-    const intervalID = timerFn(60);
+    const intervalID = timerFn(1);
     return () => {
       clearInterval(intervalID);
     };
@@ -138,7 +146,7 @@ const ExamPaperContainer = () => {
     setModalOpen(false);
     setActiveStep(0);
     setAnsList([]);
-    timerFn(60);
+    timerFn(1);
     examPaper.map((el) => (el.checked = false));
   };
 

@@ -91,7 +91,9 @@ const ExamPaper = () => {
                       },
                     }}
                   >
-                    <BSTypography>{timer}</BSTypography>
+                    <BSTypography>
+                      {timer.minute}:{timer.second}
+                    </BSTypography>
                   </BSStack>
                 </BSStack>
                 <BSStack mb={3}>

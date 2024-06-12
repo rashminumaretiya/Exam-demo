@@ -20,7 +20,7 @@ const CreateExam = () => {
   } = CreateExamContainer();
 
   return (
-    <BSContainer>
+    <BSContainer sx={{ pb: 2 }}>
       <BSForm onSubmit={handleSubmit}>
         <BSCard sx={{ my: 3, "& .MuiCardContent-root": { pb: 0 } }}>
           <BSFormField
@@ -40,7 +40,14 @@ const CreateExam = () => {
               {cloneField?.length - 1 === i ? (
                 cloneField?.length <= 14 && (
                   <IconButton
-                    sx={{ backgroundColor: "primary.main" }}
+                    sx={{
+                      backgroundColor: "primary.main",
+                      color: "white.main",
+                      "&:hover": {
+                        backgroundColor: "primary.light",
+                        color: "primary.main",
+                      },
+                    }}
                     onClick={(e) => handleAddRow(e, i)}
                   >
                     <Plus />
@@ -48,7 +55,14 @@ const CreateExam = () => {
                 )
               ) : (
                 <IconButton
-                  sx={{ backgroundColor: "error.main", color: "white.main" }}
+                  sx={{
+                    backgroundColor: "error.main",
+                    color: "white.main",
+                    "&:hover": {
+                      backgroundColor: "error.light",
+                      color: "error.main",
+                    },
+                  }}
                   onClick={(e) => handleDeleteRow(e, i)}
                 >
                   <Remove />

@@ -83,31 +83,55 @@ const CreateExamContainer = () => {
       helperText: subjectError,
     },
   ];
+
   const [cloneField, setCloneField] = useState([createExamField]);
   const handleChange = (e, ind) => {
     const { name, value } = e.target;
-    const newErr = {
-      [name]: validation(
-        name,
-        value,
-        true,
-        null,
-        formFields.questions[ind].options
-      ),
-    };
-    const newField = [...subjectField, ...cloneField.flat()];
-    const field = newField?.filter((field) => field.name === name);
-    let option = formFields?.questions[ind]?.options;
     let newCloneField = JSON.parse(JSON.stringify(cloneField));
-
+    const newErr = {
+      [name]: validation(name, value, true, null),
+    };
     const findIndex = newCloneField[ind].findIndex(
       (item) => item?.name === Object.keys(newErr)[0]
     );
+    if (name.startsWith("option")) {
+      const optionIndex = parseInt(name.replace("option", "")) - 1;
+      formFields.questions[ind].options[optionIndex] = value;
+
+      formFields.questions[ind].options.forEach((opt, idx) => {
+        if (idx !== optionIndex && opt === value) {
+          newErr[name] = "Option values must be unique";
+        }
+      });
+
+      formFields.questions[ind].options.forEach((opt, idx) => {
+        const optionName = `option${idx + 1}`;
+        const optionFindIndex = newCloneField[ind].findIndex(
+          (item) => item.name === optionName
+        );
+        if (opt) {
+          const isDuplicate =
+            formFields.questions[ind].options.filter((option) => option === opt)
+              .length > 1;
+          newCloneField[ind][optionFindIndex].error = isDuplicate
+            ? "Option values must be unique"
+            : false;
+          newCloneField[ind][optionFindIndex].helperText = isDuplicate
+            ? "Option values must be unique"
+            : "";
+        }
+      });
+
+      newCloneField[ind][findIndex].value = value;
+    }
+    const newField = [...subjectField, ...cloneField.flat()];
+    const field = newField?.filter((field) => field.name === name);
+    let option = formFields?.questions[ind]?.options;
+
     if (findIndex !== -1) {
       newCloneField[ind][findIndex].error = newErr[name];
       newCloneField[ind][findIndex].helperText = newErr[name];
     }
-
     field.forEach((item) => {
       if (item.isOptions) {
         option[item.optionIndex - 1] = value;
@@ -147,6 +171,9 @@ const CreateExamContainer = () => {
     }));
   };
 
+  console.log("formFields", formFields);
+  console.log("cloneField", cloneField);
+
   const handleAddRow = () => {
     let newErr = {};
     let errorCheck = false;
@@ -157,11 +184,18 @@ const CreateExamContainer = () => {
         if (typeof item[key] === "object") {
           let optionsError = [];
           item.options?.forEach((val, ind) => {
-            optionsError.push(validation(`option${ind + 1}`, val));
+            const duplicate =
+              item.options.filter((option) => option === val).length > 1;
+            const errorMessage =
+              duplicate && val !== ""
+                ? "Option values must be unique"
+                : validation(`option${ind + 1}`, val, true, null);
+            optionsError.push(errorMessage);
           });
+
           newErr[key] = optionsError;
         } else {
-          newErr[key] = validation(key, item[key]);
+          newErr[key] = validation(key, item[key], true, null);
         }
       }
       subArray.forEach((item, innerIndex) => {
